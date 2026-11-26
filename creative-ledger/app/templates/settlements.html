@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Settlements</h1>
+<div class="card">
+<table>
+  <tr><th>ID</th><th>Account</th><th>Cur</th><th class="num">Settled</th><th class="num">Allocated</th><th class="num">Unallocated</th><th>Status</th></tr>
+  {% for s in settlements %}
+  <tr><td>{{ s.settlement_id }}</td><td>{{ s.destination_account }}</td><td>{{ s.currency_code }}</td>
+      <td class="num">{{ '{:,.2f}'.format(s.settled_amount) }}</td><td class="num">{{ '{:,.2f}'.format(s.allocated) }}</td>
+      <td class="num">{{ '{:,.2f}'.format(s.settled_amount - s.allocated) }}</td><td>{{ s.reconciliation_status }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+
+<div class="grid">
+<form method="post" action="{{ url_for('settlement_new') }}" class="card">
+  <h2>New settlement</h2>
+  <label for="dest">Destination account</label><input id="dest" name="destination" required>
+  <label for="amt">Settled amount</label><input id="amt" name="amount" type="number" step="0.01" min="0.01" required>
+  <label for="cur">Currency</label><select id="cur" name="currency">{% for c in currencies %}<option>{{ c }}</option>{% endfor %}</select>
+  <button type="submit">Create settlement</button>
+</form>
+
+<form method="post" action="{{ url_for('settlement_allocate') }}" class="card">
+  <h2>Allocate a transaction</h2>
+  <label for="sid">Settlement</label>
+  <select id="sid" name="settlement_id">{% for s in settlements %}<option value="{{ s.settlement_id }}">#{{ s.settlement_id }} ({{ s.currency_code }})</option>{% endfor %}</select>
+  <label for="tid">Transaction</label>
+  <select id="tid" name="transaction_id">{% for t in txs %}<option value="{{ t.transaction_id }}">#{{ t.transaction_id }} {{ t.transaction_type }}, net {{ t.net_amount }} {{ t.currency_code }}</option>{% endfor %}</select>
+  <label for="aamt">Allocated amount</label><input id="aamt" name="amount" type="number" step="0.01" min="0.01" required>
+  <button type="submit">Allocate</button>
+</form>
+</div>
+<p class="muted">Try allocating more than the settlement or the transaction holds, or mixing currencies. The database rejects it.</p>
+
+<h2>Allocations</h2>
+<div class="card"><table>
+  <tr><th>Settlement</th><th>Transaction</th><th class="num">Allocated</th></tr>
+  {% for a in allocations %}<tr><td>#{{ a.settlement_id }}</td><td>#{{ a.transaction_id }}</td><td class="num">{{ '{:,.2f}'.format(a.allocated_amount) }}</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

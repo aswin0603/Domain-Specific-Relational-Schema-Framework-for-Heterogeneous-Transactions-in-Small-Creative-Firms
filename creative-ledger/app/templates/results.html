@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Benchmark results at 1M transactions</h1>
+<p class="muted">Median values from the Review 1 experiments: single-core VM, PostgreSQL 16.15, warm cache.</p>
+<div class="charts">
+  <div class="card"><canvas id="size" aria-label="Total size in MB for STI, CTI and EAV" role="img"></canvas></div>
+  <div class="card"><canvas id="q4" aria-label="Subtype aggregation latency in ms" role="img"></canvas></div>
+  <div class="card"><canvas id="q1" aria-label="Generic whole-row lookup in ms per row" role="img"></canvas></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const labels = ['STI', 'CTI', 'EAV'];
+const colours = ['#8aa0c4', '#0b6e69', '#c0773a'];
+function bar(id, title, data) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colours }] },
+    options: { plugins: { legend: { display: false }, title: { display: true, text: title } },
+               scales: { y: { beginAtZero: true } } }
+  });
+}
+bar('size', 'Total size incl. indexes (MB), lower is better', [254.9, 362.5, 601.2]);
+bar('q4', 'Q4 subtype aggregation (ms), lower is better', [192.1, 129.0, 538.6]);
+bar('q1', 'Q1 generic full-row lookup (ms/row), lower is better', [0.144, 1.04, 0.457]);
+</script>
+{% endblock %}

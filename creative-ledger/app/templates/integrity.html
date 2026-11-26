@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Integrity tests</h1>
+<p>Each test sends an invalid input straight to PostgreSQL and checks that the database refuses it. Every test runs inside a transaction that is rolled back, so your data stays untouched.</p>
+<form method="post"><button type="submit">Run all tests</button></form>
+{% if results %}
+<div class="card" style="margin-top:1rem"><table>
+  <tr><th>Invalid input</th><th>Result</th><th>Database message</th></tr>
+  {% for label, rejected, message in results %}
+  <tr><td>{{ label }}</td>
+      <td class="{{ 'pass' if rejected else 'fail' }}">{{ 'Rejected' if rejected else 'Accepted' }}</td>
+      <td style="white-space:normal">{{ message }}</td></tr>
+  {% endfor %}
+</table>
+<p>{{ results|selectattr(1)|list|length }} of {{ results|length }} invalid inputs were rejected.</p></div>
+{% endif %}
+{% endblock %}

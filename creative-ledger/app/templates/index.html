@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Income by month</h1>
+<div class="card">
+{% if monthly %}
+<table>
+  <tr><th>Month</th><th>Currency</th><th>Type</th><th class="num">Transactions</th><th class="num">Net amount</th></tr>
+  {% for r in monthly %}
+  <tr><td>{{ r.month }}</td><td>{{ r.currency_code }}</td><td>{{ r.transaction_type }}</td>
+      <td class="num">{{ r.n }}</td><td class="num">{{ '{:,.2f}'.format(r.net) }}</td></tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No transactions yet. Add one to see monthly totals.</p>{% endif %}
+</div>
+
+<h2>Latest transactions (flat read model)</h2>
+<form method="post" action="{{ url_for('refresh') }}"><button type="submit">Refresh read model</button></form>
+<div class="card">
+<table>
+  <tr><th>ID</th><th>Type</th><th>Date</th><th class="num">Net</th><th>Cur</th><th>Status</th><th>Detail</th></tr>
+  {% for r in recent %}
+  <tr><td>{{ r.transaction_id }}</td><td>{{ r.transaction_type }}</td><td>{{ r.event_date.strftime('%Y-%m-%d') }}</td>
+      <td class="num">{{ '{:,.2f}'.format(r.net_amount) }}</td><td>{{ r.currency_code }}</td><td>{{ r.status }}</td>
+      <td>{{ r.client or r.product or r.work_id or r.plan or r.grantor or r.item_received or r.platform or '' }}</td></tr>
+  {% endfor %}
+</table>
+<p class="muted">Rows added after the last refresh appear here once you refresh the read model.</p>
+</div>
+{% endblock %}

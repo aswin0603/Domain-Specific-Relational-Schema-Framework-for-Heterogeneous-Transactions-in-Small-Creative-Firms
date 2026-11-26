@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Creative Ledger{% endblock %}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+:root { --bg:#f4f6f9; --ink:#14213d; --muted:#5b667a; --line:#d5dbe5; --accent:#0b6e69; --ok:#1a7f37; --err:#b42318; --card:#ffffff; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 "IBM Plex Sans", system-ui, sans-serif; }
+header { background:var(--ink); color:#fff; display:flex; flex-wrap:wrap; align-items:center; gap:1.5rem; padding:.75rem 1.5rem; }
+header b { font-size:1.15rem; }
+nav a { color:#cfd8e8; text-decoration:none; margin-right:1.1rem; padding:.25rem 0; }
+nav a:hover, nav a:focus-visible { color:#fff; border-bottom:2px solid #5fd0c8; }
+main { max-width:1000px; margin:0 auto; padding:1.5rem; }
+h1 { font-size:1.6rem; margin:.2rem 0 1rem; } h2 { font-size:1.15rem; margin:1.8rem 0 .6rem; }
+.card { background:var(--card); border:1px solid var(--line); padding:1rem 1.25rem; margin-bottom:1rem; overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:.92rem; }
+th, td { text-align:left; padding:.4rem .6rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+th { color:var(--muted); font-weight:600; }
+td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+label { display:block; font-size:.88rem; color:var(--muted); margin:.6rem 0 .2rem; }
+input, select { width:100%; padding:.45rem .55rem; border:1px solid var(--line); background:#fff; font:inherit; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline:3px solid #5fd0c8; outline-offset:1px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0 1rem; }
+button { margin-top:1rem; background:var(--accent); color:#fff; border:0; padding:.55rem 1.1rem; font:inherit; font-weight:600; cursor:pointer; }
+button:hover { background:#095a56; }
+fieldset { border:0; padding:0; margin:0; }
+.flash { padding:.6rem .9rem; margin:0 0 1rem; border-left:4px solid; background:#fff; }
+.flash.ok { border-color:var(--ok); } .flash.err { border-color:var(--err); }
+.pass { color:var(--ok); font-weight:600; } .fail { color:var(--err); font-weight:600; }
+.muted { color:var(--muted); }
+.charts { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1rem; }
+</style>
+</head>
+<body>
+<header>
+  <b>Creative Ledger</b>
+  <nav>
+    <a href="{{ url_for('index') }}">Dashboard</a>
+    <a href="{{ url_for('add') }}">Add transaction</a>
+    <a href="{{ url_for('settlements') }}">Settlements</a>
+    <a href="{{ url_for('integrity') }}">Integrity tests</a>
+    <a href="{{ url_for('results') }}">Benchmark results</a>
+  </nav>
+</header>
+<main>
+{% for category, message in get_flashed_messages(with_categories=true) %}
+  <p class="flash {{ category }}">{{ message }}</p>
+{% endfor %}
+{% block body %}{% endblock %}
+</main>
+</body>
+</html>
